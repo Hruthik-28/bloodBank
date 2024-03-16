@@ -227,7 +227,7 @@ export const listDonations = (req, res) => {
 // Manage Donation Controller
 export const manageDonation = (req, res) => {
     const { donationId, action } = req.params;
-
+    console.log(donationId, action);
     // Check if the action is valid
     if (!["approve", "reject"].includes(action)) {
         return res.status(400).json({ message: "Invalid action" });
@@ -338,6 +338,7 @@ export const listRequests = (req, res) => {
 export const manageRequests = (req, res) => {
     const { requestId, action } = req.params;
     console.log(requestId, action);
+
     // Check if the action is valid
     if (!["approve", "reject"].includes(action)) {
         return res.status(400).json({ message: "Invalid action" });
@@ -433,67 +434,33 @@ export const manageRequests = (req, res) => {
                                                     const patientId =
                                                         result[0].patient_id;
 
-                                                    if (action === "approve") {
-                                                        // Increment requests_accepted and decrement requests_pending
-                                                        pool.query(
-                                                            "UPDATE Patients SET total_requests = total_requests + 1, requests_pending = requests_pending - 1, requests_accepted = requests_accepted + 1 WHERE patient_id = ?",
-                                                            [patientId],
-                                                            (err, result) => {
-                                                                if (err) {
-                                                                    console.error(
-                                                                        "Error updating Patients table:",
-                                                                        err
-                                                                    );
-                                                                    return res
-                                                                        .status(
-                                                                            500
-                                                                        )
-                                                                        .json({
-                                                                            message:
-                                                                                "An error occurred while updating Patients table",
-                                                                        });
-                                                                }
-
-                                                                // Send success response
-                                                                res.status(
-                                                                    200
-                                                                ).json({
-                                                                    message:
-                                                                        "Request approved and Patients table updated successfully",
-                                                                });
+                                                    // Increment requests_accepted and decrement requests_pending
+                                                    pool.query(
+                                                        "UPDATE Patients SET total_requests = total_requests + 1, requests_pending = requests_pending - 1, requests_accepted = requests_accepted + 1 WHERE patient_id = ?",
+                                                        [patientId],
+                                                        (err, result) => {
+                                                            if (err) {
+                                                                console.error(
+                                                                    "Error updating Patients table:",
+                                                                    err
+                                                                );
+                                                                return res
+                                                                    .status(500)
+                                                                    .json({
+                                                                        message:
+                                                                            "An error occurred while updating Patients table",
+                                                                    });
                                                             }
-                                                        );
-                                                    } else {
-                                                        // Increment requests_rejected and decrement requests_pending
-                                                        pool.query(
-                                                            "UPDATE Patients SET total_requests = total_requests + 1, requests_pending = requests_pending - 1, requests_rejected = requests_rejected + 1 WHERE patient_id = ?",
-                                                            [patientId],
-                                                            (err, result) => {
-                                                                if (err) {
-                                                                    console.error(
-                                                                        "Error updating Patients table:",
-                                                                        err
-                                                                    );
-                                                                    return res
-                                                                        .status(
-                                                                            500
-                                                                        )
-                                                                        .json({
-                                                                            message:
-                                                                                "An error occurred while updating Patients table",
-                                                                        });
-                                                                }
 
-                                                                // Send success response
-                                                                res.status(
-                                                                    200
-                                                                ).json({
-                                                                    message:
-                                                                        "Request rejected and Patients table updated successfully",
-                                                                });
-                                                            }
-                                                        );
-                                                    }
+                                                            // Send success response
+                                                            res.status(
+                                                                200
+                                                            ).json({
+                                                                message:
+                                                                    "Request approved and Patients table updated successfully",
+                                                            });
+                                                        }
+                                                    );
                                                 }
                                             );
 
@@ -505,11 +472,29 @@ export const manageRequests = (req, res) => {
                                         }
                                     );
                                 } else {
-                                    // If there are not enough units available, send a message
-                                    res.status(400).json({
-                                        message:
-                                            "Insufficient blood units available in stock",
-                                    });
+                                    // If there are not enough units available, set request_status to "rejected" and send a message
+                                    pool.query(
+                                        "UPDATE Requests SET request_status = 'rejected' WHERE request_id = ?",
+                                        [requestId],
+                                        (err, result) => {
+                                            if (err) {
+                                                console.error(
+                                                    "Error updating request status to 'rejected':",
+                                                    err
+                                                );
+                                                return res.status(500).json({
+                                                    message:
+                                                        "An error occurred while updating request status to 'rejected'",
+                                                });
+                                            }
+
+                                            // Send a message indicating insufficient blood units available in stock
+                                            res.status(400).json({
+                                                message:
+                                                    "Insufficient blood units available in stock. Request rejected.",
+                                            });
+                                        }
+                                    );
                                 }
                             }
                         );
