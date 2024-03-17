@@ -6,7 +6,7 @@ export const requestHistory = (req, res) => {
 
     // Retrieve request history for the patient from the database
     pool.query(
-        "SELECT * FROM Requests WHERE patient_id = ?",
+        "SELECT Requests.*, Patients.* FROM Requests LEFT JOIN Patients ON Requests.patient_id = Patients.patient_id WHERE Requests.patient_id = ?",
         [patientId],
         (err, result) => {
             if (err) {
@@ -39,11 +39,9 @@ export const requestBlood = (req, res) => {
         (err, result) => {
             if (err) {
                 console.error("Error requesting blood:", err);
-                return res
-                    .status(500)
-                    .json({
-                        message: "An error occurred while requesting blood",
-                    });
+                return res.status(500).json({
+                    message: "An error occurred while requesting blood",
+                });
             }
 
             // Update patient's request counts in Patients table
@@ -56,12 +54,10 @@ export const requestBlood = (req, res) => {
                             "Error updating patient's request counts:",
                             err
                         );
-                        return res
-                            .status(500)
-                            .json({
-                                message:
-                                    "An error occurred while updating patient's request counts",
-                            });
+                        return res.status(500).json({
+                            message:
+                                "An error occurred while updating patient's request counts",
+                        });
                     }
 
                     // Send success response
@@ -70,6 +66,45 @@ export const requestBlood = (req, res) => {
                     });
                 }
             );
+        }
+    );
+};
+
+export const loginPatient = (req, res) => {
+    const { email, password } = req.body;
+    console.log(email, password);
+    // Validate inputs
+    if (!email || !password) {
+        return res
+            .status(400)
+            .json({ message: "Please provide email and password" });
+    }
+
+    // Check if the email and password match a donor record in the database
+    pool.query(
+        "SELECT * FROM PATIENTS WHERE email = ? AND password = ?",
+        [email.trim(), password],
+        (err, results) => {
+            if (err) {
+                console.error("Error executing SQL query:", err);
+                return res.status(500).json({
+                    message: "An error occurred while processing your request",
+                });
+            }
+
+            // If no PATIENT found with provided email and password
+            if (results.length === 0) {
+                return res
+                    .status(401)
+                    .json({ message: "Invalid email or password" });
+            }
+
+            // If PATIENT is found, create a session or token for authentication
+            const patient = results[0];
+            res.status(200).json({
+                message: "Login successful",
+                patientId: patient.patient_id,
+            });
         }
     );
 };

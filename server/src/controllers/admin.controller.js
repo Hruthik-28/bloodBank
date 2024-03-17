@@ -14,7 +14,7 @@ export const loginAdmin = (req, res) => {
     // Check if the username and password match an admin record in the database
     pool.query(
         "SELECT * FROM Admins WHERE username = ? AND password = ?",
-        [username, password],
+        [username.trim(), password],
         (err, results) => {
             if (err) {
                 console.error("Error executing SQL query:", err);

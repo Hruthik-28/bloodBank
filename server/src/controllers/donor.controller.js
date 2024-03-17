@@ -57,10 +57,9 @@ export const donateBlood = (req, res) => {
 // Controller to view donation history of a donor
 export const viewDonationHistory = (req, res) => {
     const { donorId } = req.params;
-    console.log(donorId);
     // Query to fetch donation history of the donor from Donations table
     pool.query(
-        "SELECT * FROM Donations WHERE donor_id = ?",
+        "SELECT Donations.*, Donors.* FROM Donations LEFT JOIN Donors ON Donations.donor_id = Donors.donor_id WHERE Donations.donor_id = ?",
         [donorId],
         (err, results) => {
             if (err) {
@@ -91,7 +90,7 @@ export const loginDonor = (req, res) => {
     // Check if the email and password match a donor record in the database
     pool.query(
         "SELECT * FROM Donors WHERE email = ? AND password = ?",
-        [email, password],
+        [email.trim(), password],
         (err, results) => {
             if (err) {
                 console.error("Error executing SQL query:", err);

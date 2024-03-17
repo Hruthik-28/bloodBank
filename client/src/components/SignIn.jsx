@@ -7,6 +7,8 @@ import { useDispatch } from "react-redux";
 import { adminLogin } from "@/store/adminSlice";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import DonorLogin from "./DonorLogin";
+import PatientLogin from "./PatientLogin";
 function SignIn() {
     const {
         register,
@@ -30,26 +32,26 @@ function SignIn() {
                     <TabsList className="">
                         <TabsTrigger
                             value="admin"
-                            className="w-[150px] "
+                            className="sm:w-[150px] w-[100px]"
                         >
                             Admin
                         </TabsTrigger>
                         <TabsTrigger
                             value="donor"
-                            className="w-[150px]"
+                            className="sm:w-[150px] w-[100px]"
                         >
                             Donor
                         </TabsTrigger>
                         <TabsTrigger
                             value="patient"
-                            className="w-[150px]"
+                            className="sm:w-[150px] w-[100px]"
                         >
                             Patient
                         </TabsTrigger>
                     </TabsList>
                     <TabsContent
                         value="admin"
-                        className="w-[450px]"
+                        className="sm:w-[450px] w-[300px]"
                     >
                         <section className="w-full rounded-md mx-auto space-y-4 p-5 flex flex-col items-center border">
                             <Logo />
@@ -93,10 +95,10 @@ function SignIn() {
                         </section>
                     </TabsContent>
                     <TabsContent value="donor">
-                        Change your donor here.
+                        <DonorLogin />
                     </TabsContent>
                     <TabsContent value="patient">
-                        Change your patient here.
+                        <PatientLogin />
                     </TabsContent>
                 </Tabs>
             </div>
