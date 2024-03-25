@@ -1,13 +1,15 @@
-import React from "react";
+import Footer from "./Footer";
 import { NavbarOne } from "./NavbarOne";
 import { Outlet } from "react-router-dom";
-import { ModeToggle } from "./mode-toggle";
 
 function Layout() {
     return (
         <>
             <NavbarOne />
-            <Outlet />
+            <div className="h-[81vh] overflow-hidden">
+                <Outlet />
+            </div>
+            <Footer />
         </>
     );
 }

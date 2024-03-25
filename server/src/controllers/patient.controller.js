@@ -72,7 +72,7 @@ export const requestBlood = (req, res) => {
 
 export const loginPatient = (req, res) => {
     const { email, password } = req.body;
-    console.log(email, password);
+
     // Validate inputs
     if (!email || !password) {
         return res
@@ -82,7 +82,7 @@ export const loginPatient = (req, res) => {
 
     // Check if the email and password match a donor record in the database
     pool.query(
-        "SELECT * FROM PATIENTS WHERE email = ? AND password = ?",
+        "SELECT * FROM Patients WHERE email = ? AND password = ?",
         [email.trim(), password],
         (err, results) => {
             if (err) {
@@ -105,6 +105,47 @@ export const loginPatient = (req, res) => {
                 message: "Login successful",
                 patientId: patient.patient_id,
             });
+        }
+    );
+};
+
+export const registerPatient = (req, res) => {
+    const { name, email, password, mobile, bloodGroup, diseaseStatus } = req.body;
+
+    // Validate inputs
+    if (!name || !email || !password || !mobile || !bloodGroup || !diseaseStatus) {
+        return res.status(400).json({ message: "Please provide all required information" });
+    }
+
+    // Check if the email is already registered
+    pool.query(
+        "SELECT * FROM Patients WHERE email = ?",
+        [email],
+        (err, results) => {
+            if (err) {
+                console.error("Error executing SQL query:", err);
+                return res.status(500).json({ message: "An error occurred while processing your request" });
+            }
+
+            // If email already exists
+            if (results.length > 0) {
+                return res.status(409).json({ message: "Email already exists" });
+            }
+
+            // Insert new patient record into Donors table
+            pool.query(
+                "INSERT INTO Patients (name, email, password, mobile, blood_group, disease_status) VALUES (?, ?, ?, ?, ?, ?)",
+                [name, email, password, mobile, bloodGroup, diseaseStatus],
+                (err, result) => {
+                    if (err) {
+                        console.error("Error registering donor:", err);
+                        return res.status(500).json({ message: "An error occurred while registering donor" });
+                    }
+
+                    // Send success response
+                    res.status(201).json({ message: "Registration successful" });
+                }
+            );
         }
     );
 };

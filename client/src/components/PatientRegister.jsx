@@ -4,7 +4,6 @@ import Logo from "./Logo";
 import { Button } from "./ui/button";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { registerDonor } from "@/store/donorSlice";
 import {
     Select,
     SelectContent,
@@ -12,8 +11,9 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { patientRegister } from "@/store/patientSlice";
 
-function DonorRegister() {
+function PatientRegister() {
     const {
         register,
         handleSubmit,
@@ -23,19 +23,19 @@ function DonorRegister() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const RegisterAsDonor = async (data) => {
-        const res = await dispatch(registerDonor(data));
-        if (res.type === "registerDonor/fulfilled") {
-            navigate('/login')
+    const RegisterAsPatient = async (data) => {
+        const res = await dispatch(patientRegister(data));
+        if (res.type === "patientRegister/fulfilled") {
+            navigate("/login");
         }
     };
     return (
         <>
             <section className="w-full rounded-md mx-auto space-y-4 p-5 flex flex-col items-center border">
                 <Logo />
-                <h1 className="font-bold">Donor Registration</h1>
+                <h1 className="font-bold">Patient Registration</h1>
                 <form
-                    onSubmit={handleSubmit(RegisterAsDonor)}
+                    onSubmit={handleSubmit(RegisterAsPatient)}
                     className="flex flex-col w-full space-y-5"
                 >
                     <Input
@@ -176,4 +176,4 @@ function DonorRegister() {
     );
 }
 
-export default DonorRegister;
+export default PatientRegister;

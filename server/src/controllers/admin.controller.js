@@ -3,7 +3,7 @@ import { pool } from "../index.js";
 
 export const loginAdmin = (req, res) => {
     const { username, password } = req.body;
-
+    console.log(username, password);
     // Validate inputs
     if (!username || !password) {
         return res

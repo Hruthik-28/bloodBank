@@ -48,7 +48,9 @@ function DonorDashboard() {
                             <TableCell>{donation?.blood_group}</TableCell>
                             <TableCell>{donation?.units_donated}</TableCell>
                             <TableCell>{donation?.donation_date}</TableCell>
-                            <TableCell>{donation?.donation_status}</TableCell>
+                            <TableCell>
+                                {donation?.donation_status || "pending"}
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>

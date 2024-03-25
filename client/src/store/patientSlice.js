@@ -7,12 +7,28 @@ const initialState = {
     requestHistory: null,
 };
 
+export const patientRegister = createAsyncThunk(
+    "patientRegister",
+    async (data) => {
+        try {
+            const response = await axiosInstance.post(
+                "/patient/register",
+                data
+            );
+            toast.success(response.data.message);
+            return response.data.patientId;
+        } catch (error) {
+            toast.error(error?.response?.data?.message);
+            throw error;
+        }
+    }
+);
 export const patientLogin = createAsyncThunk("patientLogin", async (data) => {
     try {
         const response = await axiosInstance.post("/patient/login", data);
         localStorage.setItem("patientId", `${response.data.patientId}`);
         toast.success(response.data.message);
-        return response.data.patienId;
+        return response.data.patientId;
     } catch (error) {
         toast.error(error?.response?.data?.message);
         throw error;
@@ -32,7 +48,6 @@ export const requestHistory = createAsyncThunk(
         }
     }
 );
-
 export const requestBlood = createAsyncThunk("requestBlood", async (data) => {
     try {
         const response = await axiosInstance.post(

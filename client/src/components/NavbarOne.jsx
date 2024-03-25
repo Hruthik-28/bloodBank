@@ -72,7 +72,7 @@ export function NavbarOne() {
     }
 
     return (
-        <div className="relative w-full border-b">
+        <div className="sticky top-0 w-full border-b">
             <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 sm:px-6 lg:px-8">
                 <div className="inline-flex items-center space-x-2">
                     <span>
@@ -106,9 +106,14 @@ export function NavbarOne() {
                     {auth ? (
                         <Button onClick={handleLogout}>Logout</Button>
                     ) : (
-                        <Link to={"/login"}>
-                            <Button>Login</Button>
-                        </Link>
+                        <div className="space-x-4">
+                            <Link to={"/login"}>
+                                <Button>Login</Button>
+                            </Link>
+                            <Link to={"/register"}>
+                                <Button>Register</Button>
+                            </Link>
+                        </div>
                     )}
                 </div>
                 <div className="lg:hidden">
@@ -164,11 +169,18 @@ export function NavbarOne() {
                                         Logout
                                     </Button>
                                 ) : (
-                                    <Link to={"/login"}>
-                                        <Button className="w-full ">
-                                            Login
-                                        </Button>
-                                    </Link>
+                                    <div>
+                                        <Link to={"/login"}>
+                                            <Button className="w-full ">
+                                                Login
+                                            </Button>
+                                        </Link>
+                                        <Link to={"/register"}>
+                                            <Button className="w-full mt-4">
+                                                Register
+                                            </Button>
+                                        </Link>
+                                    </div>
                                 )}
                             </div>
                         </div>
