@@ -136,3 +136,8 @@ To start the development server, follow these steps:
 ```
   npm run dev
 ```
+
+3. As you start the client and server your app should be running on:
+```
+  http://localhost:5173
+```
