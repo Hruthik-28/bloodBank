@@ -50,7 +50,7 @@ To install the dependencies and set up the project, follow these steps:
 ## Before starting the server:
 
 1. open ur sql in cmd
-2. create a db called bloodBank
+2. create a db called blood_bank
 3. create the following tables
 
 ```
